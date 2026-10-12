@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta name="theme-color" content="#8e1b24" />
+<title>For Shivuu 🍓</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500;600;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Jost:wght@300;400;500&display=swap" rel="stylesheet" />
+
+<style>
+:root{
+  --red:#8e1b24;        /* deep cherry */
+  --red2:#a52834;       /* lighter cherry */
+  --cream:#f3e9d8;      /* warm cream */
+  --cream2:#efe3cd;
+  --ink:#5a2a22;
+  --gold:#c8a86a;
+  --rose:#e9a6a0;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;}
+body{
+  font-family:'Jost',sans-serif;
+  background:#6a0f16;
+  color:var(--ink);
+  overflow:hidden;
+  position:fixed;inset:0;
+}
+
+/* gingham pattern used on several slides */
+.gingham{
+  background-color:var(--cream);
+  background-image:
+    linear-gradient(90deg, rgba(142,27,36,.30) 50%, transparent 50%),
+    linear-gradient(rgba(142,27,36,.30) 50%, transparent 50%);
+  background-size:38px 38px;
+}
+.gingham::before{
+  content:"";position:absolute;inset:0;
+  background-image:
+    linear-gradient(90deg, rgba(142,27,36,.30) 50%, transparent 50%),
+    linear-gradient(rgba(142,27,36,.30) 50%, transparent 50%);
+  background-size:38px 38px;background-position:19px 19px;mix-blend-mode:multiply;opacity:.5;
+}
+/* damask-ish red */
+.damask{
+  background-color:var(--red);
+  background-image:radial-gradient(circle at 20% 20%, rgba(255,255,255,.05) 0 2px, transparent 3px),
+                   radial-gradient(circle at 60% 70%, rgba(255,255,255,.04) 0 2px, transparent 3px),
+                   radial-gradient(circle at 85% 30%, rgba(0,0,0,.08) 0 3px, transparent 4px);
+  background-size:60px 60px;
+}
+
+/* ---------- Slide system ---------- */
+.deck{position:relative;height:100%;width:100%;}
+.slide{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  text-align:center;padding:40px 26px;
+  opacity:0;visibility:hidden;transform:scale(1.03);
+  transition:opacity .7s ease, transform .7s ease, visibility .7s;
+  overflow:hidden;
+}
+.slide.active{opacity:1;visibility:visible;transform:scale(1);}
+
+/* fonts helpers */
+.script{font-family:'Dancing Script',cursive;}
+.serif{font-family:'Cormorant Garamond',serif;}
+
+/* ---------- Decorative florals (CSS, no images) ---------- */
+.lily{position:absolute;font-size:70px;filter:drop-shadow(0 4px 6px rgba(0,0,0,.3));z-index:3;pointer-events:none;}
+.lily.tl{top:-14px;left:-10px;transform:rotate(-20deg);}
+.lily.br{bottom:-14px;right:-10px;transform:rotate(160deg);}
+.lily.tr{top:-10px;right:-8px;transform:rotate(30deg);}
+.lily.bl{bottom:-10px;left:-8px;transform:rotate(-150deg);}
+
+/* ---------- Framed card ---------- */
+.frame{
+  position:relative;width:100%;max-width:360px;
+  background:var(--cream);
+  padding:30px 26px;border-radius:4px;
+  box-shadow:0 24px 50px -20px rgba(0,0,0,.6);
+  border:1px solid rgba(255,255,255,.5);
+}
+.frame.dashed{outline:2px dashed var(--red);outline-offset:-14px;}
+
+/* titles */
+.big-script{font-family:'Dancing Script',cursive;color:var(--red);line-height:1;}
+
+/* ---------- Buttons ---------- */
+.nav-btn{
+  position:absolute;bottom:26px;z-index:20;
+  background:var(--cream);color:var(--red);border:1px solid var(--gold);
+  font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:600;letter-spacing:1px;
+  padding:9px 24px;border-radius:3px;cursor:pointer;
+  box-shadow:0 6px 14px rgba(0,0,0,.3);transition:transform .2s ease,background .2s;
+}
+.nav-btn:active{transform:scale(.94);}
+.nav-next{right:22px;}
+.nav-prev{left:22px;background:transparent;color:var(--cream);border-color:rgba(255,255,255,.4);box-shadow:none;}
+
+.pill{
+  display:inline-block;background:var(--red);color:var(--cream);
+  font-family:'Cormorant Garamond',serif;font-size:17px;letter-spacing:1px;
+  padding:11px 30px;border-radius:4px;border:1px solid var(--gold);cursor:pointer;
+  box-shadow:0 6px 14px rgba(0,0,0,.35);transition:transform .2s;
+}
+.pill:active{transform:scale(.94);}
+.pill.ghost{background:var(--cream);color:var(--red);}
+
+/* progress dots */
+.dots{position:absolute;top:16px;left:50%;transform:translateX(-50%);display:flex;gap:7px;z-index:30;}
+.dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.35);transition:all .3s;}
+.dot.on{background:var(--cream);width:18px;border-radius:4px;}
+
+/* ---------- Envelope (slide 2) ---------- */
+.env{position:relative;width:290px;height:195px;cursor:pointer;}
+.env .pocket{position:absolute;inset:0;background:var(--cream2);border-radius:6px;box-shadow:0 20px 40px -16px rgba(0,0,0,.6);overflow:hidden;z-index:2;}
+.env .letter{
+  position:absolute;left:12px;right:12px;top:14px;bottom:14px;background:#fff;border-radius:3px;z-index:1;
+  padding:16px;transition:transform .7s ease;transform:translateY(0);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+}
+.env.open .letter{transform:translateY(-120px);z-index:5;box-shadow:0 20px 40px -14px rgba(0,0,0,.5);}
+.env .flap{
+  position:absolute;top:0;left:0;width:100%;height:0;border-left:145px solid transparent;border-right:145px solid transparent;
+  border-top:98px solid var(--cream);z-index:4;transform-origin:top;transition:transform .5s ease .1s;filter:brightness(.96);
+}
+.env.open .flap{transform:rotateX(180deg);z-index:1;}
+.env .front{position:absolute;bottom:0;left:0;width:100%;height:110px;background:var(--cream2);z-index:4;border-radius:0 0 6px 6px;}
+.env .seal{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:40px;height:40px;border-radius:50%;background:var(--red);color:var(--cream);display:flex;align-items:center;justify-content:center;font-family:'Dancing Script';font-size:22px;z-index:6;box-shadow:0 3px 6px rgba(0,0,0,.3);transition:opacity .3s;}
+.env.open .seal{opacity:0;}
+
+/* vinyl */
+.vinyl{width:160px;height:160px;border-radius:50%;background:
+  radial-gradient(circle, #e9c877 0 16%, #111 17% 100%);
+  position:relative;animation:spin 6s linear infinite;box-shadow:0 14px 30px rgba(0,0,0,.5);}
+.vinyl::after{content:"";position:absolute;inset:0;border-radius:50%;
+  background:repeating-radial-gradient(circle, transparent 0 3px, rgba(255,255,255,.05) 3px 4px);}
+.vinyl .hole{position:absolute;top:50%;left:50%;width:12px;height:12px;background:var(--cream);border-radius:50%;transform:translate(-50%,-50%);}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+/* polaroids */
+.polaroid{background:#fff;padding:8px 8px 26px;box-shadow:0 10px 22px rgba(0,0,0,.4);border-radius:2px;}
+.polaroid .ph{width:100%;height:90px;background:linear-gradient(135deg,#d9c3a3,#b89b72);display:flex;align-items:center;justify-content:center;font-size:28px;overflow:hidden;position:relative;}
+.polaroid .ph img{width:100%;height:100%;object-fit:cover;display:block;}
+/* taller frame for the main couple photo */
+.polaroid.big .ph{height:170px;}
+.polaroid .cap{font-family:'Dancing Script';color:var(--ink);font-size:16px;margin-top:4px;}
+
+/* bear */
+.bear{font-size:70px;animation:bob 2.4s ease-in-out infinite;}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+
+/* flower buttons */
+.flower-wrap{position:relative;display:flex;flex-direction:column;gap:12px;width:100%;max-width:320px;}
+.fbtn{background:var(--cream);border:1px solid var(--gold);border-radius:30px;padding:12px 18px;font-family:'Cormorant Garamond',serif;color:var(--red);font-size:16px;cursor:pointer;transition:transform .2s,background .2s;display:flex;align-items:center;gap:10px;justify-content:center;}
+.fbtn:active{transform:scale(.95);background:#fff;}
+.fbtn .rev{display:none;}
+.fbtn.open{background:var(--red);color:var(--cream);flex-direction:column;}
+.fbtn.open .rev{display:block;font-size:14px;margin-top:4px;font-style:italic;}
+
+/* text bits */
+.heading{font-family:'Dancing Script',cursive;color:var(--red);font-size:38px;line-height:1.05;}
+.heading.cream{color:var(--cream);}
+.letter-text{font-family:'Cormorant Garamond',serif;font-size:14.5px;line-height:1.55;color:var(--ink);}
+.sub-serif{font-family:'Cormorant Garamond',serif;font-style:italic;color:var(--cream);font-size:18px;margin-top:10px;}
+.tape{position:absolute;top:-10px;left:50%;transform:translateX(-50%) rotate(-3deg);width:90px;height:22px;background:rgba(201,168,106,.5);border:1px dashed rgba(255,255,255,.4);}
+
+/* floating hearts on click */
+.fly{position:fixed;z-index:99;pointer-events:none;font-size:26px;animation:fly 1s ease forwards;}
+@keyframes fly{0%{transform:translateY(0) scale(.6);opacity:1}100%{transform:translateY(-120px) scale(1.3);opacity:0}}
+
+/* intro hint */
+.hint{position:absolute;bottom:70px;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.6);}
+.center{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;}
+</style>
+</head>
+<body>
+
+<div class="deck" id="deck">
+
+  <!-- dots -->
+  <div class="dots" id="dots"></div>
+
+  <!-- 1: COVER -->
+  <section class="slide gingham active" data-slide>
+    <span class="lily tl">🌺</span><span class="lily br">🌺</span>
+    <div class="frame dashed">
+      <div class="heading" style="font-size:44px;">Happy Birthday</div>
+      <div class="heading" style="font-size:30px;">My Love</div>
+      <div class="letter-text" style="margin-top:10px;letter-spacing:3px;">— SHIVUU —</div>
+    </div>
+    <div class="hint">tap “open” to begin 🍓</div>
+    <button class="nav-btn nav-next" onclick="go(1)">Open ❤</button>
+  </section>
+
+  <!-- 2: ENVELOPE LETTER -->
+  <section class="slide damask" data-slide>
+    <span class="lily tr">🌷</span><span class="lily bl">🌷</span>
+    <div class="heading cream" style="font-size:30px;margin-bottom:18px;">Dear My Love</div>
+    <div class="env" id="env" onclick="this.classList.add('open')">
+      <div class="letter">
+        <div class="letter-text">
+          Happy birthday, my darling Shivuu.<br/><br/>
+          You give me a love I only used to read about. Thank you for being my favourite hello and my hardest goodbye. 💌
+        </div>
+      </div>
+      <div class="pocket"></div>
+      <div class="flap"></div>
+      <div class="front"></div>
+      <div class="seal script">S</div>
+    </div>
+    <div class="sub-serif">tap the envelope ✿</div>
+    <button class="nav-btn nav-prev" onclick="go(0)">‹</button>
+    <button class="nav-btn nav-next" onclick="go(2)">Next ›</button>
+  </section>
+
+  <!-- 3: SURPRISE POSTCARD -->
+  <section class="slide damask" data-slide>
+    <span class="lily tl">🌺</span><span class="lily br">🌺</span>
+    <div class="heading cream" style="font-size:28px;margin-bottom:18px;">I Have a Little<br/>Surprise For You</div>
+    <div class="frame" style="max-width:320px;">
+      <div class="tape"></div>
+      <div class="polaroid big" style="transform:rotate(-4deg);width:170px;margin:0 auto;">
+        <div class="ph"><img src="images/us.jpg" alt="you & me" onerror="this.parentNode.textContent='💑'"></div>
+        <div class="cap">you &amp; me</div>
+      </div>
+      <div class="letter-text" style="margin-top:14px;">
+        “you gave me all the love I wished for in the world.”
+      </div>
+    </div>
+    <button class="nav-btn nav-prev" onclick="go(1)">‹</button>
+    <button class="nav-btn nav-next" onclick="go(3)">Next ›</button>
+  </section>
+
+  <!-- 4: YES / NO -->
+  <section class="slide gingham" data-slide>
+    <span class="lily tr">🌷</span><span class="lily bl">🌷</span>
+    <div class="frame" style="max-width:300px;">
+      <div class="heading" style="font-size:26px;margin-bottom:18px;">Would You Like<br/>To See It?</div>
+      <div class="center">
+        <button class="pill" onclick="go(4)">Yes ❤</button>
+        <button class="pill ghost" id="noBtn">No</button>
+      </div>
+      <div class="letter-text" id="noMsg" style="margin-top:12px;display:none;">(there's no “no” for my love 🙈)</div>
+    </div>
+    <button class="nav-btn nav-prev" onclick="go(2)">‹</button>
+  </section>
+
+  <!-- 5: YAY -->
+  <section class="slide gingham" data-slide>
+    <span class="lily tl">🌺</span><span class="lily br">🌺</span>
+    <div class="frame dashed" style="max-width:300px;">
+      <div class="bear">🧸</div>
+      <div class="heading" style="font-size:26px;margin-top:6px;">Yay! Finally<br/>You Are Here!</div>
+    </div>
+    <button class="nav-btn nav-prev" onclick="go(3)">‹</button>
+    <button class="nav-btn nav-next" onclick="go(5)">Next ›</button>
+  </section>
+
+  <!-- 6: THESE ARE FOR YOU -->
+  <section class="slide gingham" data-slide>
+    <span class="lily tr">🌷</span><span class="lily bl">🌷</span>
+    <div class="heading" style="font-size:30px;margin-bottom:16px;">These are for you</div>
+    <div style="display:flex;gap:14px;flex-wrap:wrap;justify-content:center;max-width:340px;">
+      <div class="polaroid" style="width:120px;transform:rotate(-5deg);"><div class="ph"><img src="images/memory1.jpg" alt="memory" onerror="this.parentNode.textContent='📷'"></div><div class="cap">memories</div></div>
+      <div class="polaroid" style="width:120px;transform:rotate(4deg);"><div class="ph"><img src="images/memory2.jpg" alt="memory" onerror="this.parentNode.textContent='💝'"></div><div class="cap">for you</div></div>
+    </div>
+    <button class="nav-btn nav-prev" onclick="go(4)">‹</button>
+    <button class="nav-btn nav-next" onclick="go(6)">Next ›</button>
+  </section>
+
+  <!-- 7: EVERYDAY WITH YOU -->
+  <section class="slide damask" data-slide>
+    <span class="lily tl">🌺</span><span class="lily br">🌺</span>
+    <div class="heading cream" style="font-size:28px;margin-bottom:16px;">Everyday with you</div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:center;max-width:340px;">
+      <div class="polaroid" style="width:95px;transform:rotate(-6deg);"><div class="ph"><img src="images/everyday1.jpg" alt="us" onerror="this.parentNode.textContent='📸'"></div></div>
+      <div class="polaroid" style="width:95px;transform:rotate(3deg);"><div class="ph"><img src="images/everyday2.jpg" alt="us" onerror="this.parentNode.textContent='🌹'"></div></div>
+      <div class="polaroid" style="width:95px;transform:rotate(-2deg);"><div class="ph"><img src="images/everyday3.jpg" alt="us" onerror="this.parentNode.textContent='🥂'"></div></div>
+    </div>
+    <div class="heading cream" style="font-size:46px;margin-top:14px;">love you</div>
+    <button class="nav-btn nav-prev" onclick="go(5)">‹</button>
+    <button class="nav-btn nav-next" onclick="go(7)">Next ›</button>
+  </section>
+
+  <!-- 8: FLOWERS -->
+  <section class="slide damask" data-slide>
+    <span class="lily tr">🌷</span><span class="lily bl">🌷</span>
+    <div class="heading cream" style="font-size:26px;margin-bottom:6px;">Flowers For You,<br/>My Sweetheart 💐</div>
+    <div style="font-size:50px;margin:6px 0 12px;">💐</div>
+    <div class="flower-wrap">
+      <button class="fbtn" onclick="this.classList.toggle('open')">🌷 Tap me <span class="rev">You are my calm in every storm.</span></button>
+      <button class="fbtn" onclick="this.classList.toggle('open')">🌸 Tap me <span class="rev">Loving you is the easiest thing I do.</span></button>
+      <button class="fbtn" onclick="this.classList.toggle('open')">🌹 Tap me <span class="rev">Forever isn't long enough with you.</span></button>
+    </div>
+    <button class="nav-btn nav-prev" onclick="go(6)">‹</button>
+    <button class="nav-btn nav-next" onclick="go(8)">Next ›</button>
+  </section>
+
+  <!-- 9: VINYL / MUSIC MEMORY -->
+  <section class="slide damask" data-slide>
+    <span class="lily tl">🌺</span><span class="lily br">🌺</span>
+    <div class="heading cream" style="font-size:28px;margin-bottom:20px;">Dear My Love,<br/>You're My Favourite Song</div>
+    <div class="vinyl"><div class="hole"></div></div>
+    <div class="sub-serif">…on repeat, just like my love for you.</div>
+    <button class="nav-btn nav-prev" onclick="go(7)">‹</button>
+    <button class="nav-btn nav-next" onclick="go(9)">Next ›</button>
+  </section>
+
+  <!-- 10: FINALE -->
+  <section class="slide gingham" data-slide>
+    <span class="lily tl">🌺</span><span class="lily br">🌺</span>
+    <span class="lily tr">🌷</span><span class="lily bl">🌷</span>
+    <div class="frame dashed">
+      <div class="heading" style="font-size:40px;">Happy Birthday</div>
+      <div class="heading" style="font-size:30px;">Shivuu 🍓</div>
+      <div class="letter-text" style="margin-top:12px;">
+        I love you — today, tomorrow, and in every version of forever.
+      </div>
+      <button class="pill" style="margin-top:16px;" onclick="rain()">Celebrate 🎉</button>
+    </div>
+    <button class="nav-btn nav-prev" onclick="go(8)">‹</button>
+  </section>
+
+</div>
+
+<script>
+const slides=[...document.querySelectorAll('[data-slide]')];
+let cur=0;
+
+/* dots */
+const dotsWrap=document.getElementById('dots');
+slides.forEach((_,i)=>{const d=document.createElement('div');d.className='dot'+(i===0?' on':'');dotsWrap.appendChild(d);});
+const dots=[...document.querySelectorAll('.dot')];
+
+function go(i){
+  if(i<0||i>=slides.length)return;
+  slides[cur].classList.remove('active');
+  dots[cur].classList.remove('on');
+  cur=i;
+  slides[cur].classList.add('active');
+  dots[cur].classList.add('on');
+  heart();
+}
+
+/* "No" button runs away */
+const noBtn=document.getElementById('noBtn');
+if(noBtn){
+  const flee=()=>{
+    noBtn.style.position='relative';
+    noBtn.style.left=(Math.random()*120-60)+'px';
+    noBtn.style.top=(Math.random()*60-30)+'px';
+    document.getElementById('noMsg').style.display='block';
+  };
+  noBtn.addEventListener('mouseover',flee);
+  noBtn.addEventListener('click',flee);
+}
+
+/* heart on nav */
+function heart(){
+  const h=document.createElement('div');
+  h.className='fly';h.textContent=['❤','🌹','🍓','🌸'][Math.floor(Math.random()*4)];
+  h.style.left=(window.innerWidth/2-13)+'px';
+  h.style.top=(window.innerHeight-120)+'px';
+  document.body.appendChild(h);setTimeout(()=>h.remove(),1000);
+}
+
+/* confetti rain finale */
+function rain(){
+  for(let i=0;i<30;i++){
+    setTimeout(()=>{
+      const h=document.createElement('div');
+      h.className='fly';h.textContent=['❤','🌹','🍓','🌸','🎉','💐'][Math.floor(Math.random()*6)];
+      h.style.left=(Math.random()*window.innerWidth)+'px';
+      h.style.top=(window.innerHeight*0.6)+'px';
+      h.style.fontSize=(20+Math.random()*18)+'px';
+      document.body.appendChild(h);setTimeout(()=>h.remove(),1000);
+    },i*70);
+  }
+}
+
+/* swipe support */
+let sx=0;
+document.getElementById('deck').addEventListener('touchstart',e=>sx=e.touches[0].clientX,{passive:true});
+document.getElementById('deck').addEventListener('touchend',e=>{
+  const dx=e.changedTouches[0].clientX-sx;
+  if(dx<-50)go(cur+1); else if(dx>50)go(cur-1);
+},{passive:true});
+</script>
+</body>
+</html>
